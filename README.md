@@ -206,20 +206,120 @@ Admins can:
 * ESLint
 * Prettier
 
-### Optional Components
+### API Services
 
-* Docker
-* Celery
-* Redis
-* ReportLab
-* OpenPyXL
-* drf-yasg
-* pytest
-* pytest-django
-* Factory Boy
-* Faker
+SmartTask follows a RESTful API architecture built with Django REST Framework and secured using JWT Authentication. The platform exposes several API modules that support project management, collaboration, analytics, and AI-powered decision-making.
 
+*Authentication API
 
+Provides secure user authentication and authorization services.
+
+Features:
+
+User registration
+User login and logout
+JWT access and refresh tokens
+Profile management
+Role-based access control (Admin, Manager, Member)
+User Management API
+
+Handles user administration and access management.
+
+Features:
+
+User creation and management
+Role assignment
+User profile updates
+Permission enforcement
+Account status management
+Project Management API
+
+Manages project lifecycle and team collaboration.
+
+Features:
+
+Create, update, and delete projects
+Project ownership management
+Project status tracking
+Team assignment
+Project progress monitoring
+Task Management API
+
+Supports task planning, assignment, and execution.
+
+Features:
+
+Task creation and management
+Task assignment to team members
+Priority and deadline management
+Status tracking
+Task-to-project linkage
+Notification API
+
+Provides real-time communication and system alerts using WebSockets and Django Channels.
+
+Features:
+
+Instant task assignment notifications
+Deadline reminders
+Project update alerts
+Status change notifications
+Real-time user activity updates
+
+### Technologies Used:
+
+Django Channels
+Daphne ASGI Server
+Redis / Memurai
+Analytics API
+
+Generates insights and performance metrics for projects and teams.
+
+Features:
+
+Project performance statistics
+Task completion analytics
+Team productivity monitoring
+Overdue task reporting
+Dashboard data aggregation
+AI Insights API
+
+Integrates OpenAI services to enhance productivity and decision-making.
+
+Features:
+
+Intelligent task prioritization
+Workload balancing recommendations
+Project risk prediction
+Productivity suggestions
+AI-generated project summaries
+
+### Technology Used:
+
+OpenAI API
+Reporting API
+
+Provides data export and reporting capabilities.
+
+Features:
+
+Project reports
+Task reports
+Performance summaries
+Export to PDF and Excel formats
+Custom analytics reports
+Security Features
+
+### The SmartTask APIs are protected through:
+
+JWT Authentication
+Role-Based Access Control (RBAC)
+Secure Password Hashing
+Permission-Based Authorization
+CORS Protection
+Token Validation
+HTTPS Support
+API Architecture
 # User Roles
 
  Role                                                                                  
@@ -227,18 +327,6 @@ Admins can:
 *Admin    Full system control, user management, project management, analytics, and configuration     
 *Manager Create and manage projects, assign tasks, monitor team performance, and access AI insights 
 *Member Manage assigned tasks, update progress, collaborate with teams, and receive AI guidance    
-
-
-# Future Enhancements
-
-* Team chat and collaboration workspace
-* File sharing and document management
-* Mobile application (Android & iOS)
-* AI-powered project forecasting
-* Advanced reporting and exports
-* Calendar and third-party integrations
-* Multi-tenant organization support
-
 
 # Project Goal
 
