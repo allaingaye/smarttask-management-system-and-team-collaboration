@@ -1,0 +1,125 @@
+@base_url = http://127.0.0.1:8000
+@@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzkwMDg5LCJpYXQiOjE3ODA3ODk3ODksImp0aSI6IjJlZDVmZWE2NjhlYzRlNzg5NjQyMDdlZTcwNjQzZTkwIiwidXNlcl9pZCI6IjIifQ.ROAQlmRuBIVNTzpMOPfxbwjl-RAXxJa4GMZqk9YSPKY
+@refresh_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc4MDg3NjE4OSwiaWF0IjoxNzgwNzg5Nzg5LCJqdGkiOiJhMGUyNjQ2ZTViMDU0ODcwYTg2MDZiYjkyMWZhZDJmYyIsInVzZXJfaWQiOiIyIn0.o9dfzz1s7s2GZKzk1DzlLmD2hY3SYarSkgYpPjB_3v0
+
+### Login (get new tokens)
+POST {{base_url}}/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "lucien",
+  "password": "1234"
+}
+
+### Refresh Access Token
+POST {{base_url}}/api/auth/refresh/
+Content-Type: application/json
+
+{
+  "refresh": "{{refresh_token}}"
+}
+
+### Create Project
+POST {{base_url}}/api/projects/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzg2MTI4LCJpYXQiOjE3ODA3ODU4MjgsImp0aSI6IjI3NWM2MTdiOTdkMDRlY2JiMmI4YTcwYjZhOGYzMDM5IiwidXNlcl9pZCI6IjIifQ.q_zGPUj_LyJw-WtA0zYSOiG5tzSJi5Wrh4hahD0ycls
+Content-Type: application/json
+
+{
+  "name": "SmartTask Backend",
+  "description": "Building the Django backend",
+  "start_date": "2026-06-07",
+  "end_date": "2026-07-01",
+  "status": "active",
+  "manager": 2
+}
+
+
+### List Projects
+GET {{base_url}}/api/projects/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzg2NTA2LCJpYXQiOjE3ODA3ODYyMDYsImp0aSI6IjE3MTc1ODNmYzRhZTQ0OWRhOTBhNTMxMzEwNjA5OWM0IiwidXNlcl9pZCI6IjIifQ.FPsWnPexZ54Gf9o-N1lbGDIJ4Hy0R6OmcKYyvQ_FZ1o
+### Update Project
+PATCH {{base_url}}/api/projects/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzg2NTA2LCJpYXQiOjE3ODA3ODYyMDYsImp0aSI6IjE3MTc1ODNmYzRhZTQ0OWRhOTBhNTMxMzEwNjA5OWM0IiwidXNlcl9pZCI6IjIifQ.FPsWnPexZ54Gf9o-N1lbGDIJ4Hy0R6OmcKYyvQ_FZ1o
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### Delete Project
+DELETE {{base_url}}/api/projects/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzg2NTA2LCJpYXQiOjE3ODA3ODYyMDYsImp0aSI6IjE3MTc1ODNmYzRhZTQ0OWRhOTBhNTMxMzEwNjA5OWM0IiwidXNlcl9pZCI6IjIifQ.FPsWnPexZ54Gf9o-N1lbGDIJ4Hy0R6OmcKYyvQ_FZ1o
+
+### Create Task
+POST {{base_url}}/api/tasks/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzkwNTc5LCJpYXQiOjE3ODA3OTAyNzksImp0aSI6Ijk3YjU0ZDJlZDYzZDRmMDA4OTdkZmY5ZWYwNjQ4ZTg4IiwidXNlcl9pZCI6IjIifQ.zPTsvYkBWY788NN4AQWiRIpIfEmde_06eGYyBmlwaQ8
+Content-Type: application/json
+
+{
+  "title": "Design Database Schema",
+  "description": "Create ERD and normalize tables",
+  "due_date": "2026-06-15",
+  "status": "pending",
+  "project": 2,
+  "assigned_to": 2
+}
+
+### List Tasks
+GET {{base_url}}/api/tasks/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzkwNTc5LCJpYXQiOjE3ODA3OTAyNzksImp0aSI6Ijk3YjU0ZDJlZDYzZDRmMDA4OTdkZmY5ZWYwNjQ4ZTg4IiwidXNlcl9pZCI6IjIifQ.zPTsvYkBWY788NN4AQWiRIpIfEmde_06eGYyBmlwaQ8
+### Update Task
+PATCH {{base_url}}/api/tasks/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzkwNTc5LCJpYXQiOjE3ODA3OTAyNzksImp0aSI6Ijk3YjU0ZDJlZDYzZDRmMDA4OTdkZmY5ZWYwNjQ4ZTg4IiwidXNlcl9pZCI6IjIifQ.zPTsvYkBWY788NN4AQWiRIpIfEmde_06eGYyBmlwaQ8
+Content-Type: application/json
+
+{
+  "status": "in_progress"
+}
+
+### Delete Task
+DELETE {{base_url}}/api/tasks/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzkwNTc5LCJpYXQiOjE3ODA3OTAyNzksImp0aSI6Ijk3YjU0ZDJlZDYzZDRmMDA4OTdkZmY5ZWYwNjQ4ZTg4IiwidXNlcl9pZCI6IjIifQ.zPTsvYkBWY788NN4AQWiRIpIfEmde_06eGYyBmlwaQ8
+
+### Try creating a project as Member
+POST {{base_url}}/api/projects/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwNzkwNTc5LCJpYXQiOjE3ODA3OTAyNzksImp0aSI6Ijk3YjU0ZDJlZDYzZDRmMDA4OTdkZmY5ZWYwNjQ4ZTg4IiwidXNlcl9pZCI6IjIifQ.zPTsvYkBWY788NN4AQWiRIpIfEmde_06eGYyBmlwaQ8
+Content-Type: application/json
+
+{
+  "name": "Test Project",
+  "description": "Should fail for member",
+  "start_date": "2026-06-10",
+  "end_date": "2026-06-20",
+  "status": "active",
+  "manager": 2
+}
+
+### Page 1 of tasks
+GET {{base_url}}/api/tasks/?page=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwODczNTQ5LCJpYXQiOjE3ODA4NzMyNDksImp0aSI6IjAzZTVmYjJkMzE5NzRjOGQ4MGJkYTE1NDA4NTI4ZDE2IiwidXNlcl9pZCI6IjIifQ.UvN-Vg3IiZu_6hgkxSw76vsAWHn3mFm4bk9fT6LytCg
+
+### Page 2 of tasks
+GET {{base_url}}/api/tasks/?page=2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwODczNTQ5LCJpYXQiOjE3ODA4NzMyNDksImp0aSI6IjAzZTVmYjJkMzE5NzRjOGQ4MGJkYTE1NDA4NTI4ZDE2IiwidXNlcl9pZCI6IjIifQ.UvN-Vg3IiZu_6hgkxSw76vsAWHn3mFm4bk9fT6LytCg
+
+### Order tasks by due date ascending
+GET {{base_url}}/api/tasks/?ordering=due_date
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwODczNTQ5LCJpYXQiOjE3ODA4NzMyNDksImp0aSI6IjAzZTVmYjJkMzE5NzRjOGQ4MGJkYTE1NDA4NTI4ZDE2IiwidXNlcl9pZCI6IjIifQ.UvN-Vg3IiZu_6hgkxSw76vsAWHn3mFm4bk9fT6LytCg
+
+### Order tasks by due date descending
+GET {{base_url}}/api/tasks/?ordering=-due_date
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwODczNTQ5LCJpYXQiOjE3ODA4NzMyNDksImp0aSI6IjAzZTVmYjJkMzE5NzRjOGQ4MGJkYTE1NDA4NTI4ZDE2IiwidXNlcl9pZCI6IjIifQ.UvN-Vg3IiZu_6hgkxSw76vsAWHn3mFm4bk9fT6LytCg
+
+### Try creating a task with invalid due_date
+POST {{base_url}}/api/tasks/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgwODczNTQ5LCJpYXQiOjE3ODA4NzMyNDksImp0aSI6IjAzZTVmYjJkMzE5NzRjOGQ4MGJkYTE1NDA4NTI4ZDE2IiwidXNlcl9pZCI6IjIifQ.UvN-Vg3IiZu_6hgkxSw76vsAWHn3mFm4bk9fT6LytCg
+Content-Type: application/json
+
+{
+  "title": "Invalid Task",
+  "description": "Due date outside project range",
+  "due_date": "2026-12-31",   // ❌ outside project dates
+  "status": "pending",
+  "project": 2,
+  "assigned_to": 3
+}
