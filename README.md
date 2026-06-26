@@ -133,6 +133,16 @@ SmartTask follows a RESTful API architecture built with Django REST Framework an
 - CORS protection
 - Token validation
 
+## 📋 Prerequisites
+
+Before you begin, ensure you have installed:
+
+- **Python 3.10+** - [Download](https://www.python.org/downloads/)
+- **Node.js 18+** - [Download](https://nodejs.org/)
+- **PostgreSQL 14+** - [Download](https://www.postgresql.org/download/)
+- **Redis 7+** - [Download](https://redis.io/download/)
+- **Git** - [Download](https://git-scm.com/downloads)
+
 ### Project Goal
 
 The goal of SmartTask is to provide an intelligent, scalable, and collaborative environment where teams can manage projects efficiently, monitor progress in real time, and leverage artificial intelligence to make better decisions and improve productivity.
