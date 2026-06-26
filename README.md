@@ -164,36 +164,35 @@ OpenAI API
 
 cd backend
 
-# Create and activate virtual environment
+Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
+Install dependencies
 pip install -r requirements.txt
 
-# Set up environment variables
+Set up environment variables
 cp .env.example .env
-# Edit .env with your configuration
+ Edit .env with your configuration
 
-# Run database migrations
+ Run database migrations
 python manage.py migrate
 
-# Create superuser (admin account)
+Create superuser (admin account)
 python manage.py createsuperuser
-
-# Start Redis server (in another terminal)
+ Start Redis server (in another terminal)
 redis-server
 
-# Start the server with Daphne (ASGI for WebSockets)
+Start the server with Daphne (ASGI for WebSockets)
 daphne -b 0.0.0.0 -p 8000 smarttask.asgi:application
 
 ### frontend setup
 cd frontend
 
-# Install dependencies
+ Install dependencies
 npm install
 
-# Start the development server
+ Start the development server
 npm start
 
 ### Access the Application
