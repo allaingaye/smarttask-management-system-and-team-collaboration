@@ -73,6 +73,7 @@ A modern, full-stack project management platform with real-time collaboration, A
 | Django | 5.0+ | Web framework |
 | Django REST Framework | 3.14+ | RESTful API development |
 | Django Channels | 4.0+ | WebSocket support |
+| Daphne | 3.0+ | ASGI server for WebSockets |
 | PostgreSQL | 14+ | Production database |
 | Redis | 7.0+ | Channel layer for WebSockets |
 | JWT | 5.3+ | Authentication |
@@ -142,6 +143,68 @@ Before you begin, ensure you have installed:
 - **PostgreSQL 14+** - [Download](https://www.postgresql.org/download/)
 - **Redis 7+** - [Download](https://redis.io/download/)
 - **Git** - [Download](https://git-scm.com/downloads)
+
+## Architecture
+  Frontend (React SPA)
+    ↓ REST API (HTTP) + WebSockets
+ASGI Server (Daphne)
+    ↓
+Django REST Framework (Backend API)
+    ↓
+PostgreSQL Database
+
+Real-time Layer:
+Django Channels + Redis
+
+AI Layer:
+OpenAI API
+
+
+## Backend setup
+
+cd backend
+
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Run database migrations
+python manage.py migrate
+
+# Create superuser (admin account)
+python manage.py createsuperuser
+
+# Start Redis server (in another terminal)
+redis-server
+
+# Start the server with Daphne (ASGI for WebSockets)
+daphne -b 0.0.0.0 -p 8000 smarttask.asgi:application
+
+### frontend setup
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
+
+### Access the Application
+Frontend: http://localhost:3000
+
+Backend API: http://localhost:8000/api/
+
+Admin Panel: http://localhost:8000/admin/
+
+WebSocket: ws://localhost:8000/ws/notifications/
+
 
 ### Project Goal
 
