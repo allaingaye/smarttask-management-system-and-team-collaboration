@@ -116,7 +116,7 @@ SIMPLE_JWT = {
 }
 
 # CORS - Allow both localhost and Render frontend
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+ALLOWED_HOSTS = ['smarttask-backend-rkv6.onrender.com', 'localhost', '127.0.0.1']
 
 # Swagger
 SWAGGER_SETTINGS = {

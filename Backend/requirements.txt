@@ -67,3 +67,4 @@ websockets==16.0
 wrapt==2.2.1
 zope.interface==8.5
 dj-database-url==2.1.0
+whitenoise==6.6.0
