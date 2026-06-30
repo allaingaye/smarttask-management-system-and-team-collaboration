@@ -84,14 +84,15 @@ export default function Register() {
         password2: "***hidden***",
       });
 
-      const response = await api.post("/auth/register/", requestData);
-
-      console.log("✅ Registration successful!", response.data);
-      
-      toast.success("Account created successfully! 🎉", {
-        duration: 3000,
-        icon: "🎉",
-      });
+     // Replace the api.post line with:
+const response = await fetch('https://smarttask-backend-rkv6.onrender.com/api/auth/register/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  body: JSON.stringify(requestData),
+});
 
       // ✅ Auto-login after registration
       const loginSuccess = await login(formData.username, formData.password);
