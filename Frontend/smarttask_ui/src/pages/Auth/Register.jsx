@@ -70,29 +70,29 @@ export default function Register() {
     try {
       console.log("📝 Attempting registration for:", formData.username);
       
+      // ✅ Only send fields that the backend expects
       const requestData = {
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        password2: formData.password, // ✅ REQUIRED by backend
+        // ❌ REMOVED password2 - backend doesn't need it
       };
       
       console.log("📤 Sending registration data:", {
         username: requestData.username,
         email: requestData.email,
         password: "***hidden***",
-        password2: "***hidden***",
       });
 
-     // Replace the api.post line with:
-const response = await fetch('https://smarttask-backend-rkv6.onrender.com/api/auth/register/', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-  body: JSON.stringify(requestData),
-});
+      // ✅ Use the api service (which already has the correct base URL)
+      const response = await api.post("/auth/register/", requestData);
+
+      console.log("✅ Registration successful!", response.data);
+      
+      toast.success("Account created successfully! 🎉", {
+        duration: 3000,
+        icon: "🎉",
+      });
 
       // ✅ Auto-login after registration
       const loginSuccess = await login(formData.username, formData.password);
