@@ -21,6 +21,9 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # ✅ Get ALLOWED_HOSTS from environment or use defaults
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,smarttask-backend-rkv6.onrender.com').split(',')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 
 # Application definition
 INSTALLED_APPS = [
