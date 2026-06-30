@@ -75,7 +75,6 @@ export default function Register() {
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        // ❌ REMOVED password2 - backend doesn't need it
       };
       
       console.log("📤 Sending registration data:", {
@@ -114,34 +113,49 @@ export default function Register() {
         const errorData = err.response.data;
         
         // Check for field-specific errors
-        const fieldErrors = {};
+        const fieldErrorsObj = {};
         let firstMessage = "";
         
-        if (typeof errorData === 'object') {
-          for (const [field, messages] of Object.entries(errorData)) {
+        // ✅ Handle { errors: { field: [messages] } } format
+        if (errorData.errors) {
+          for (const [field, messages] of Object.entries(errorData.errors)) {
             if (Array.isArray(messages)) {
               const msg = messages.join(', ');
-              fieldErrors[field] = msg;
+              fieldErrorsObj[field] = msg;
               if (!firstMessage) firstMessage = msg;
             } else if (typeof messages === 'string') {
-              fieldErrors[field] = messages;
+              fieldErrorsObj[field] = messages;
               if (!firstMessage) firstMessage = messages;
             } else if (typeof messages === 'object' && messages !== null) {
               // Handle nested errors
               for (const [subField, subMessages] of Object.entries(messages)) {
                 if (Array.isArray(subMessages)) {
                   const msg = subMessages.join(', ');
-                  fieldErrors[`${field}.${subField}`] = msg;
+                  fieldErrorsObj[`${field}.${subField}`] = msg;
                   if (!firstMessage) firstMessage = msg;
                 }
               }
             }
           }
+        } else {
+          // ✅ Handle { field: [messages] } or { field: "message" } format
+          for (const [field, messages] of Object.entries(errorData)) {
+            if (field === 'status' || field === 'message' || field === 'detail' || field === 'error') continue;
+            
+            if (Array.isArray(messages)) {
+              const msg = messages.join(', ');
+              fieldErrorsObj[field] = msg;
+              if (!firstMessage) firstMessage = msg;
+            } else if (typeof messages === 'string') {
+              fieldErrorsObj[field] = messages;
+              if (!firstMessage) firstMessage = messages;
+            }
+          }
         }
         
         // If we have field errors, display them
-        if (Object.keys(fieldErrors).length > 0) {
-          setFieldErrors(fieldErrors);
+        if (Object.keys(fieldErrorsObj).length > 0) {
+          setFieldErrors(fieldErrorsObj);
           errorMessage = firstMessage || "Please check the form for errors";
         } else if (errorData.detail) {
           errorMessage = errorData.detail;
