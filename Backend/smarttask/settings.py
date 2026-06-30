@@ -1,6 +1,4 @@
-"""
-Django settings for smarttask project.
-"""
+
 
 from pathlib import Path
 from datetime import timedelta
@@ -207,44 +205,3 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    # ============================================================
-#  AUTO-CREATE ADMIN USER ON DEPLOYMENT (for Render free tier)
-# ============================================================
-print(" Checking for admin user...")
-try:
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    
-    # Check if any superuser exists
-    if User.objects.filter(is_superuser=True).exists():
-        admin_user = User.objects.filter(is_superuser=True).first()
-        print(f"✅ Admin user already exists: {admin_user.username}")
-    else:
-        # Create superuser
-        User.objects.create_superuser(
-            username='lucien',
-            email='admin@example.com',
-            password='Admin123!',
-            role='Admin'
-        )
-        print("=" * 60)
-        print("✅ Admin user created successfully!")
-        print("   📧 Username: lucien")
-        print("   🔑 Password: Admin123!")
-        print("   👤 Role: Admin")
-        print("=" * 60)
-        
-        # Also create a regular member user for testing
-        if not User.objects.filter(username='member').exists():
-            User.objects.create_user(
-                username='member',
-                email='member@example.com',
-                password='Member123!',
-                role='Member'
-            )
-            print("✅ Test member user created: member / Member123!")
-        
-except Exception as e:
-    print(f"⚠️ Could not create admin user: {e}")
-    import traceback
-    traceback.print_exc()
