@@ -164,10 +164,10 @@ export default function Login() {
   };
 
   // ✅ Fill manager demo credentials (optional)
-  const fillMemberCredentials = () => {
+  const fillManagerCredentials = () => {
     setUsername("manager");
     setPassword("Manager123!");
-    toast.success("Member credentials filled!", { 
+    toast.success("Manager credentials filled!", { 
       duration: 2000, 
       icon: "👤",
       style: {
