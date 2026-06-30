@@ -68,19 +68,21 @@ export default function Register() {
     }
 
     try {
-      console.log("📝 Attempting registration for:", formData.username);
-      
-      const requestData = {
-        username: formData.username.trim(),
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-      };
-      
-      console.log("📤 Sending registration data:", {
-        username: requestData.username,
-        email: requestData.email,
-        password: "***hidden***",
-      });
+  console.log("📝 Attempting registration for:", formData.username);
+  
+  const requestData = {
+    username: formData.username.trim(),
+    email: formData.email.trim().toLowerCase(),
+    password: formData.password,
+    confirm_password: formData.confirmPassword,  // ✅ REQUIRED by backend
+  };
+  
+  console.log("📤 Sending registration data:", {
+    username: requestData.username,
+    email: requestData.email,
+    password: "***hidden***",
+    confirm_password: "***hidden***",
+  });
 
       const response = await api.post("/auth/register/", requestData);
 
