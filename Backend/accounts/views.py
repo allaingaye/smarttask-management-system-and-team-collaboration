@@ -13,14 +13,75 @@ from rest_framework.permissions import IsAuthenticated
 from .models import User
 from .serializers import UserSerializer
 from django.db.models import Q
+import logging
+
 
 # ✅ Import custom permissions
 from .permissions import IsAdmin, IsAnyUser
+logger = logging.getLogger(__name__)
 
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        try:
+            logger.info(f"📥 Registration attempt for: {request.data.get('username', 'unknown')}")
+            logger.info(f"📦 Request data: {request.data}")
+            
+            serializer = self.get_serializer(data=request.data)
+            
+            if not serializer.is_valid():
+                logger.error(f"❌ Validation errors: {serializer.errors}")
+                return Response(
+                    {
+                        'status': 'error',
+                        'message': 'Validation failed',
+                        'errors': serializer.errors
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            user = serializer.save()
+            
+            logger.info(f"✅ User registered successfully: {user.username}")
+            
+            # Log registration
+            AuditLog.objects.create(
+                actor=user,
+                target_user=user,
+                action=f"registered as {user.role}"
+            )
+            
+            return Response(
+                {
+                    'status': 'success',
+                    'message': 'Registration successful',
+                    'user': {
+                        'id': user.id,
+                        'username': user.username,
+                        'email': user.email,
+                        'role': user.role,
+                    }
+                },
+                status=status.HTTP_201_CREATED
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ Registration error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            
+            return Response(
+                {
+                    'status': 'error',
+                    'message': 'Registration failed',
+                    'error': str(e)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
