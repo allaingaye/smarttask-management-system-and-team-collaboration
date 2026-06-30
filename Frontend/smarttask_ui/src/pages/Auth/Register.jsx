@@ -70,7 +70,6 @@ export default function Register() {
     try {
       console.log("📝 Attempting registration for:", formData.username);
       
-      // ✅ Only send fields that the backend expects
       const requestData = {
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
@@ -83,7 +82,6 @@ export default function Register() {
         password: "***hidden***",
       });
 
-      // ✅ Use the api service (which already has the correct base URL)
       const response = await api.post("/auth/register/", requestData);
 
       console.log("✅ Registration successful!", response.data);
@@ -106,17 +104,21 @@ export default function Register() {
       console.error("❌ Error response:", err.response);
       console.error("❌ Error data:", err.response?.data);
       
+      // ✅ Log the full error as a string for debugging
+      if (err.response?.data) {
+        console.log("📝 Full error details:", JSON.stringify(err.response.data, null, 2));
+      }
+      
       let errorMessage = "Registration failed. Please try again.";
       
       // ✅ Parse Django REST Framework validation errors
       if (err.response?.data) {
         const errorData = err.response.data;
         
-        // Check for field-specific errors
+        // ✅ Handle { errors: { field: [messages] } } format
         const fieldErrorsObj = {};
         let firstMessage = "";
         
-        // ✅ Handle { errors: { field: [messages] } } format
         if (errorData.errors) {
           for (const [field, messages] of Object.entries(errorData.errors)) {
             if (Array.isArray(messages)) {
@@ -127,7 +129,6 @@ export default function Register() {
               fieldErrorsObj[field] = messages;
               if (!firstMessage) firstMessage = messages;
             } else if (typeof messages === 'object' && messages !== null) {
-              // Handle nested errors
               for (const [subField, subMessages] of Object.entries(messages)) {
                 if (Array.isArray(subMessages)) {
                   const msg = subMessages.join(', ');
@@ -153,7 +154,6 @@ export default function Register() {
           }
         }
         
-        // If we have field errors, display them
         if (Object.keys(fieldErrorsObj).length > 0) {
           setFieldErrors(fieldErrorsObj);
           errorMessage = firstMessage || "Please check the form for errors";
@@ -167,10 +167,9 @@ export default function Register() {
           errorMessage = errorData;
         }
         
-        // If the error is HTML (backend misconfiguration)
         if (errorMessage.includes('<!doctype html>')) {
           errorMessage = "Server configuration error. Please contact support.";
-          console.error("❌ Backend returned HTML instead of JSON. Check registration endpoint.");
+          console.error("❌ Backend returned HTML instead of JSON.");
         }
       } else if (err.message) {
         errorMessage = err.message;
