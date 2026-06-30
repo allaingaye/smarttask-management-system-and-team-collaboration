@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
   const refreshTimeoutRef = useRef(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+ const API_BASE_URL = 'https://smarttask-backend-rkv6.onrender.com';
 
   // ✅ Clear all auth data
   const clearAuthData = useCallback(() => {
