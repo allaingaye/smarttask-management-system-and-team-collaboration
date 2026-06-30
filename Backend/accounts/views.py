@@ -1,25 +1,21 @@
 # accounts/views.py
 from django.shortcuts import render, get_object_or_404
-from rest_framework import generics
-from .models import User, AuditLog
-from .serializers import RegisterSerializer
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import viewsets
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import User
-from .serializers import UserSerializer
 from django.db.models import Q
 import logging
 
-
-# ✅ Import custom permissions
+from .models import User, AuditLog
+from .serializers import RegisterSerializer, UserSerializer
 from .permissions import IsAdmin, IsAnyUser
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
