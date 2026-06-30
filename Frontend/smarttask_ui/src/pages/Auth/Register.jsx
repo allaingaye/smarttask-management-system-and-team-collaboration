@@ -17,47 +17,34 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    // Clear field error when user types
-    if (fieldErrors[name]) {
-      setFieldErrors({ ...fieldErrors, [name]: "" });
-    }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setFieldErrors({});
     setLoading(true);
 
     // ✅ Validate
-    const errors = {};
-    if (!formData.username.trim()) {
-      errors.username = "Username is required";
-    }
-    if (!formData.email.trim()) {
-      errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = "Please enter a valid email address";
-    }
-    if (!formData.password) {
-      errors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      errors.password = "Password must be at least 8 characters";
-    }
-    if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match";
+    if (!formData.username.trim() || !formData.email.trim() || !formData.password.trim()) {
+      setError("Please fill in all fields");
+      toast.error("Please fill in all fields");
+      setLoading(false);
+      return;
     }
 
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      const firstError = Object.values(errors)[0];
-      setError(firstError);
-      toast.error(firstError);
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      toast.error("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
+      toast.error("Password must be at least 8 characters");
       setLoading(false);
       return;
     }
@@ -65,25 +52,16 @@ export default function Register() {
     try {
       console.log("📝 Attempting registration for:", formData.username);
       
-      const registrationData = {
+      // ✅ Send all required fields including password2
+      const response = await api.post("/auth/register/", {
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        // Add password2 if your backend expects it
-        // password2: formData.password,
-      };
-      
-      console.log("📤 Sending registration data:", {
-        username: registrationData.username,
-        email: registrationData.email,
-        password: "***hidden***",
+        password2: formData.password, // ✅ REQUIRED by backend
       });
 
-      const response = await api.post("/auth/register/", registrationData);
-
       console.log("✅ Registration successful!", response.data);
-      
-      toast.success("Account created successfully! Redirecting...", {
+      toast.success("Account created successfully! Please login.", {
         duration: 3000,
         icon: "🎉",
       });
@@ -98,55 +76,55 @@ export default function Register() {
 
     } catch (err) {
       console.error("❌ Registration error:", err);
-      console.error("❌ Error response:", err.response);
-      console.error("❌ Error data:", err.response?.data);
+      console.error("❌ Error response:", err.response?.data);
       
       let errorMessage = "Registration failed. Please try again.";
-      const errorData = err.response?.data;
       
-      // ✅ Parse Django REST Framework validation errors
-      if (errorData) {
-        // Check for field-specific errors
-        const fieldErrors = {};
-        let firstMessage = "";
+      // ✅ Better error handling for validation errors
+      if (err.response?.data) {
+        const errorData = err.response.data;
         
-        for (const [field, messages] of Object.entries(errorData)) {
-          if (Array.isArray(messages)) {
-            const msg = messages.join(', ');
-            fieldErrors[field] = msg;
-            if (!firstMessage) firstMessage = msg;
-          } else if (typeof messages === 'string') {
-            fieldErrors[field] = messages;
-            if (!firstMessage) firstMessage = messages;
-          } else if (typeof messages === 'object' && messages !== null) {
-            // Handle nested errors (e.g., non_field_errors)
-            for (const [subField, subMessages] of Object.entries(messages)) {
-              if (Array.isArray(subMessages)) {
-                const msg = subMessages.join(', ');
-                fieldErrors[`${field}.${subField}`] = msg;
-                if (!firstMessage) firstMessage = msg;
-              }
+        if (errorData.errors) {
+          // Handle nested errors
+          const errorMessages = [];
+          for (const [field, messages] of Object.entries(errorData.errors)) {
+            if (Array.isArray(messages)) {
+              errorMessages.push(`${field}: ${messages.join(', ')}`);
+            } else if (typeof messages === 'string') {
+              errorMessages.push(`${field}: ${messages}`);
             }
           }
-        }
-        
-        if (Object.keys(fieldErrors).length > 0) {
-          setFieldErrors(fieldErrors);
-          errorMessage = firstMessage || "Please check the form for errors";
-        } else if (typeof errorData === 'string') {
-          errorMessage = errorData;
+          if (errorMessages.length > 0) {
+            errorMessage = errorMessages.join('; ');
+          }
+        } else if (errorData.username) {
+          errorMessage = Array.isArray(errorData.username) 
+            ? errorData.username[0] 
+            : errorData.username;
+        } else if (errorData.email) {
+          errorMessage = Array.isArray(errorData.email) 
+            ? errorData.email[0] 
+            : errorData.email;
+        } else if (errorData.password) {
+          errorMessage = Array.isArray(errorData.password) 
+            ? errorData.password[0] 
+            : errorData.password;
+        } else if (errorData.password2) {
+          errorMessage = Array.isArray(errorData.password2) 
+            ? errorData.password2[0] 
+            : errorData.password2;
         } else if (errorData.detail) {
           errorMessage = errorData.detail;
         } else if (errorData.message) {
           errorMessage = errorData.message;
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData;
         }
-      } else if (err.message) {
-        errorMessage = err.message;
       }
       
       setError(errorMessage);
       toast.error(errorMessage, {
-        duration: 5000,
+        duration: 4000,
         icon: "❌",
       });
     } finally {
@@ -155,29 +133,29 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Card variant="register">
-        <form onSubmit={handleSubmit} className="flex flex-col items-center w-full max-w-md">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center w-full">
           {/* Logo / Brand */}
-          <div className="mb-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-blue-500/25">
-              <span className="text-3xl">✨</span>
+          <div className="mb-4 text-center">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-2 shadow-lg shadow-blue-500/25">
+              <span className="text-2xl">✨</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Create Account</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Join SmartTask today</p>
+            <h2 className="text-xl font-bold text-gray-800">Create Account</h2>
+            <p className="text-xs text-gray-500 mt-1">Join SmartTask today</p>
           </div>
 
           {/* Error Display */}
           {error && (
-            <div className="w-full mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm">
+            <div className="w-full mb-3 p-2.5 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs">
               <span className="font-medium">Error:</span> {error}
             </div>
           )}
 
           {/* Username Input */}
-          <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 text-left">
-              Username <span className="text-red-500">*</span>
+          <div className="w-full mb-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
+              Username
             </label>
             <input
               type="text"
@@ -185,22 +163,16 @@ export default function Register() {
               placeholder="Choose a username"
               value={formData.username}
               onChange={handleChange}
-              className={`w-full p-3 rounded-xl border ${
-                fieldErrors.username ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-sm dark:text-white`}
+              className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm"
               disabled={loading}
               autoFocus
-              autoComplete="username"
             />
-            {fieldErrors.username && (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.username}</p>
-            )}
           </div>
 
           {/* Email Input */}
-          <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 text-left">
-              Email <span className="text-red-500">*</span>
+          <div className="w-full mb-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
+              Email
             </label>
             <input
               type="email"
@@ -208,21 +180,15 @@ export default function Register() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full p-3 rounded-xl border ${
-                fieldErrors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-sm dark:text-white`}
+              className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm"
               disabled={loading}
-              autoComplete="email"
             />
-            {fieldErrors.email && (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.email}</p>
-            )}
           </div>
 
           {/* Password Input */}
-          <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 text-left">
-              Password <span className="text-red-500">*</span>
+          <div className="w-full mb-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
+              Password
             </label>
             <input
               type="password"
@@ -230,25 +196,19 @@ export default function Register() {
               placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
-              className={`w-full p-3 rounded-xl border ${
-                fieldErrors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-sm dark:text-white`}
+              className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm"
               disabled={loading}
               autoComplete="new-password"
             />
-            {fieldErrors.password ? (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.password}</p>
-            ) : (
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                Must be at least 8 characters
-              </p>
-            )}
+            <p className="text-[10px] text-gray-400 mt-1 text-left">
+              Must be at least 8 characters
+            </p>
           </div>
 
           {/* Confirm Password */}
-          <div className="w-full mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 text-left">
-              Confirm Password <span className="text-red-500">*</span>
+          <div className="w-full mb-4">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
+              Confirm Password
             </label>
             <input
               type="password"
@@ -256,22 +216,17 @@ export default function Register() {
               placeholder="Confirm your password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`w-full p-3 rounded-xl border ${
-                fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-sm dark:text-white`}
+              className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm"
               disabled={loading}
               autoComplete="new-password"
             />
-            {fieldErrors.confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.confirmPassword}</p>
-            )}
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm"
+            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm"
           >
             {loading ? (
               <>
@@ -287,14 +242,14 @@ export default function Register() {
           </button>
 
           {/* Login Link */}
-          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-4 text-sm text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline font-medium transition-colors">
+            <Link to="/login" className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors">
               Sign in here
             </Link>
           </p>
 
-          <p className="mt-4 text-xs text-gray-400 dark:text-gray-500 text-center">
+          <p className="mt-3 text-[10px] text-gray-400">
             By registering, you agree to our Terms of Service
           </p>
         </form>
