@@ -148,13 +148,13 @@ export default function Login() {
     }
   };
 
-  // ✅ Fill demo credentials
-  const fillDemoCredentials = () => {
+  // ✅ Fill Admin demo credentials
+  const fillAdminCredentials = () => {
     setUsername("lucien");
     setPassword("Admin123!");
-    toast.success("Demo credentials filled!", { 
+    toast.success("Admin credentials filled!", { 
       duration: 2000, 
-      icon: "✨",
+      icon: "👑",
       style: {
         borderRadius: '10px',
         background: '#333',
@@ -163,13 +163,13 @@ export default function Login() {
     });
   };
 
-  // ✅ Fill manager demo credentials (optional)
+  // ✅ Fill Manager demo credentials
   const fillManagerCredentials = () => {
     setUsername("manager");
     setPassword("Manager123!");
     toast.success("Manager credentials filled!", { 
       duration: 2000, 
-      icon: "👤",
+      icon: "📊",
       style: {
         borderRadius: '10px',
         background: '#333',
@@ -264,19 +264,19 @@ export default function Login() {
           <div className="flex gap-2 w-full mt-3">
             <button
               type="button"
-              onClick={fillDemoCredentials}
+              onClick={fillAdminCredentials}
               className="flex-1 text-xs text-gray-400 hover:text-blue-600 transition-colors py-1 border border-gray-200 rounded-lg hover:border-blue-300"
               disabled={loading}
             >
-              🔑 Admin Demo
+              👑 Admin Demo
             </button>
             <button
               type="button"
-              onClick={fillMemberCredentials}
+              onClick={fillManagerCredentials}
               className="flex-1 text-xs text-gray-400 hover:text-green-600 transition-colors py-1 border border-gray-200 rounded-lg hover:border-green-300"
               disabled={loading}
             >
-              👤 Member Demo
+              📊 Manager Demo
             </button>
           </div>
 
