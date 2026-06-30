@@ -151,7 +151,7 @@ export default function Login() {
   // ✅ Fill demo credentials
   const fillDemoCredentials = () => {
     setUsername("lucien");
-    setPassword("Admin123");
+    setPassword("Admin123!");
     toast.success("Demo credentials filled!", { 
       duration: 2000, 
       icon: "✨",
@@ -163,10 +163,10 @@ export default function Login() {
     });
   };
 
-  // ✅ Fill member demo credentials (optional)
+  // ✅ Fill manager demo credentials (optional)
   const fillMemberCredentials = () => {
-    setUsername("member");
-    setPassword("member123");
+    setUsername("manager");
+    setPassword("Manager123!");
     toast.success("Member credentials filled!", { 
       duration: 2000, 
       icon: "👤",
