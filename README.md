@@ -8,7 +8,7 @@ A modern, full-stack project management platform with real-time collaboration, A
 **SmartTask** is a web-based project and task management platform designed to help teams plan, execute, and monitor work efficiently. It combines real-time collaboration, analytics dashboards, and AI-powered insights to improve productivity and streamline workflows.
 
 
-## ✨ Key Features
+## Key Features
 
 ### 🔐 Authentication & Authorization
 - Secure JWT (JSON Web Tokens) authentication
@@ -41,13 +41,13 @@ A modern, full-stack project management platform with real-time collaboration, A
 - Interactive charts and visual reports
 - Export reports to PDF, CSV, and Excel
 
-### 🤖 AI-Powered Insights
+###  AI-Powered Insights
 - Task prioritization recommendations
 - Workload balancing suggestions
 - Risk prediction and project health monitoring
 - AI-generated productivity insights using OpenAI
 
-### 🎨 Modern User Interface
+###  Modern User Interface
 - Responsive design
 - Dark mode support
 - Role-specific navigation
@@ -90,7 +90,7 @@ A modern, full-stack project management platform with real-time collaboration, A
 | Axios | 1.4+ | HTTP client |
 
 
-## 📊 API Services
+##  API Services
 
 SmartTask follows a RESTful API architecture built with Django REST Framework and secured using JWT Authentication.
 
@@ -114,17 +114,28 @@ SmartTask follows a RESTful API architecture built with Django REST Framework an
 - `PUT /api/tasks/{id}/` – Update task
 - `DELETE /api/tasks/{id}/` – Delete task
 
-### 🤖 AI Insights API
+###  AI Insights API
 - `GET /api/ai/insights/` – Global AI insights
 - `GET /api/ai/projects/{id}/insights/` – Project AI insights
 - `GET /api/ai/alerts/` – AI alerts
 - `POST /api/ai/projects/{id}/apply/` – Apply recommendation
 
-### 📊 Analytics API
+###  Analytics API
 - `GET /api/analytics/` – Admin analytics
 - `GET /api/analytics/manager/` – Manager analytics
 - `POST /api/analytics/export/` – Export report
+  
+### API Documentation
+SmartTask provides interactive API docs via Swagger and Redoc:
 
+- Swagger UI: `/swagger/`
+- Redoc: `/redoc/`
+
+⚠️ Note: Swagger requests are anonymous by default.  
+If your code references `request.user.role`, make sure to handle `AnonymousUser` safely:
+```python
+role = getattr(request.user, "role", None)
+Code
 
 ## 🔐 Security Features
 
