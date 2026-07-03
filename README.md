@@ -231,7 +231,7 @@ Admin Panel: http://localhost:8000/admin/
 
 WebSocket: ws://localhost:8000/ws/notifications/
  
- ### 🚀 Live Demo
+ ## 🚀 Live Demo
 
 SmartTask is deployed on **Render** (free tier).  
 ⚠️ Please note: since it’s hosted on Render’s free plan, the application may take a few seconds to spin up when idle.
