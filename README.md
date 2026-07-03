@@ -236,7 +236,7 @@ WebSocket: ws://localhost:8000/ws/notifications/
 SmartTask is deployed on **Render** (free tier).  
 ⚠️ Please note: since it’s hosted on Render’s free plan, the application may take a few seconds to spin up when idle.
 
- **Frontend (React SPA):** [https://smarttask-frontend.onrender.com](https://smarttask-frontend-l1si.onrender.com)  
+ **Frontend (React SPA):** [https://smarttask-frontend-l1si.onrender.com](https://smarttask-frontend-l1si.onrender.com)  
  **Backend API (Django + DRF):** [https://smarttask-backend-rkv6.onrender.com/api/](https://smarttask-backend-rkv6.onrender.com) 
 
 
