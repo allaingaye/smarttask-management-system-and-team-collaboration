@@ -131,7 +131,7 @@ SmartTask provides interactive API docs via **Swagger** and **Redoc**:
 
  **Swagger UI:** `/swagger/`
  **Redoc:** `/redoc/`
- Swagger requests are anonymous by default.  
+⚠️ **Note:** Swagger requests are anonymous by default.  
 If your code references `request.user.role`, make sure to handle `AnonymousUser` safely:
 
 ``python
@@ -157,7 +157,8 @@ Before you begin, ensure you have installed:
 
 
 ###  Architecture
-  Frontend (React SPA)
+  
+Frontend (React SPA)
     ↓ REST API (HTTP) + WebSockets
 ASGI Server (Daphne)
     ↓
@@ -171,32 +172,46 @@ Django Channels + Redis
 AI Layer:
 OpenAI API
 
-
 ## Backend setup
 
 cd backend
 
-Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+## ⚙️ Backend Setup
 
-Install dependencies
+``bash
+# Navigate to backend folder
+cd backend
+
+# 1. Create and activate virtual environment
+python -m venv venv
+# On Linux/Mac:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
+# 2. Install dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
 
-Set up environment variables
+# 3. Set up environment variables
 cp .env.example .env
- Edit .env with your configuration
+# Edit .env with your configuration (DB credentials, Redis, API keys)
 
- Run database migrations
+# 4. Run database migrations
 python manage.py migrate
 
-Create superuser (admin account)
+# 5. Create superuser (admin account)
 python manage.py createsuperuser
- Start Redis server (in another terminal)
+
+# 6. Start Redis server (in another terminal)
 redis-server
 
-Start the server with Daphne (ASGI for WebSockets)
+# 7. Collect static files (Swagger UI, admin panel, etc.)
+python manage.py collectstatic
+
+# 8. Start the server with Daphne (ASGI for WebSockets)
 daphne -b 0.0.0.0 -p 8000 smarttask.asgi:application
+
 
 ### frontend setup
 cd frontend
@@ -215,6 +230,14 @@ Backend API: http://localhost:8000/api/
 Admin Panel: http://localhost:8000/admin/
 
 WebSocket: ws://localhost:8000/ws/notifications/
+ 
+ ### 🚀 Live Demo
+
+SmartTask is deployed on **Render** (free tier).  
+⚠️ Please note: since it’s hosted on Render’s free plan, the application may take a few seconds to spin up when idle.
+
+ **Frontend (React SPA):** [https://smarttask-frontend.onrender.com](https://smarttask-frontend-l1si.onrender.com)  
+ **Backend API (Django + DRF):** [https://smarttask-backend-rkv6.onrender.com/api/](https://smarttask-backend-rkv6.onrender.com) 
 
 
 ### Project Goal
