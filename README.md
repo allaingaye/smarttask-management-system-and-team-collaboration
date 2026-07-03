@@ -176,7 +176,7 @@ OpenAI API
 
 cd backend
 
-## ⚙️ Backend Setup
+Backend Setup
 
 ``bash
 # Navigate to backend folder
