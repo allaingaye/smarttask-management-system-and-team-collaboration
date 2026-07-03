@@ -182,34 +182,34 @@ cd backend
 # Navigate to backend folder
 cd backend
 
-# 1. Create and activate virtual environment
+ 1. Create and activate virtual environment
 python -m venv venv
-# On Linux/Mac:
+ On Linux/Mac:
 source venv/bin/activate
-# On Windows:
+ On Windows:
 venv\Scripts\activate
 
-# 2. Install dependencies
+ 2. Install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# 3. Set up environment variables
+ 3. Set up environment variables
 cp .env.example .env
-# Edit .env with your configuration (DB credentials, Redis, API keys)
+Edit .env with your configuration (DB credentials, Redis, API keys)
 
-# 4. Run database migrations
+ 4. Run database migrations
 python manage.py migrate
 
-# 5. Create superuser (admin account)
+ 5. Create superuser (admin account)
 python manage.py createsuperuser
 
-# 6. Start Redis server (in another terminal)
+ 6. Start Redis server (in another terminal)
 redis-server
 
-# 7. Collect static files (Swagger UI, admin panel, etc.)
+ 7. Collect static files (Swagger UI, admin panel, etc.)
 python manage.py collectstatic
 
-# 8. Start the server with Daphne (ASGI for WebSockets)
+ 8. Start the server with Daphne (ASGI for WebSockets)
 daphne -b 0.0.0.0 -p 8000 smarttask.asgi:application
 
 
