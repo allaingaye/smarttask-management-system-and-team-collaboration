@@ -127,17 +127,17 @@ SmartTask follows a RESTful API architecture built with Django REST Framework an
   
 ### API Documentation
 SmartTask provides interactive API docs via Swagger and Redoc:
-
 - Swagger UI: `/swagger/`
 - Redoc: `/redoc/`
-
 ⚠️ Note: Swagger requests are anonymous by default.  
 If your code references `request.user.role`, make sure to handle `AnonymousUser` safely:
 ```python
 role = getattr(request.user, "role", None)
 Code
 
-## 🔐 Security Features
+
+
+### 🔐 Security Features
 
 - JWT Authentication with refresh token rotation
 - Role-Based Access Control (RBAC)
@@ -145,7 +145,7 @@ Code
 - CORS protection
 - Token validation
 
-## 📋 Prerequisites
+### 📋 Prerequisites
 
 Before you begin, ensure you have installed:
 
@@ -155,7 +155,8 @@ Before you begin, ensure you have installed:
 - **Redis 7+** - [Download](https://redis.io/download/)
 - **Git** - [Download](https://git-scm.com/downloads)
 
-## Architecture
+
+###  Architecture
   Frontend (React SPA)
     ↓ REST API (HTTP) + WebSockets
 ASGI Server (Daphne)
