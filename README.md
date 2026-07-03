@@ -124,18 +124,18 @@ SmartTask follows a RESTful API architecture built with Django REST Framework an
 - `GET /api/analytics/` – Admin analytics
 - `GET /api/analytics/manager/` – Manager analytics
 - `POST /api/analytics/export/` – Export report
-  
-### API Documentation
-SmartTask provides interactive API docs via Swagger and Redoc:
-- Swagger UI: `/swagger/`
-- Redoc: `/redoc/`
-⚠️ Note: Swagger requests are anonymous by default.  
+- 
+### 📖 API Documentation
+
+SmartTask provides interactive API docs via **Swagger** and **Redoc**:
+
+ **Swagger UI:** `/swagger/`
+ **Redoc:** `/redoc/`
+ Swagger requests are anonymous by default.  
 If your code references `request.user.role`, make sure to handle `AnonymousUser` safely:
-```python
+
+``python
 role = getattr(request.user, "role", None)
-Code
-
-
 
 ### 🔐 Security Features
 
