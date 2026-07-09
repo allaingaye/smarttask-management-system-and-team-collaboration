@@ -22,7 +22,6 @@ export default function Register() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Clear field error when user types
     if (fieldErrors[name]) {
       setFieldErrors({ ...fieldErrors, [name]: "" });
     }
@@ -34,7 +33,6 @@ export default function Register() {
     setFieldErrors({});
     setLoading(true);
 
-    // ✅ Validate all fields
     const errors = {};
     if (!formData.username.trim()) {
       errors.username = "Username is required";
@@ -74,7 +72,7 @@ export default function Register() {
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        confirm_password: formData.confirmPassword,  // ✅ REQUIRED by backend
+        confirm_password: formData.confirmPassword,
       };
       
       console.log("📤 Sending registration data:", {
@@ -93,7 +91,6 @@ export default function Register() {
         icon: "🎉",
       });
 
-      // ✅ Auto-login after registration
       const loginSuccess = await login(formData.username, formData.password);
       if (loginSuccess) {
         navigate("/dashboard");
@@ -187,24 +184,24 @@ export default function Register() {
       <Card variant="default" className="w-full max-w-md">
         <form onSubmit={handleSubmit} className="flex flex-col items-center w-full">
           {/* Logo / Brand */}
-          <div className="mb-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-blue-500/25">
-              <span className="text-3xl">✨</span>
+          <div className="mb-5 text-center">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-2 shadow-lg shadow-blue-500/25">
+              <span className="text-2xl">✨</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
-            <p className="text-sm text-gray-500 mt-1">Join SmartTask today</p>
+            <h2 className="text-xl font-bold text-gray-800">Create Account</h2>
+            <p className="text-xs text-gray-500 mt-0.5">Join SmartTask today</p>
           </div>
 
           {/* Error Display */}
           {error && (
-            <div className="w-full mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            <div className="w-full mb-3 p-2.5 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs">
               <span className="font-medium">Error:</span> {error}
             </div>
           )}
 
           {/* Username Input */}
-          <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
+          <div className="w-full mb-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
               Username <span className="text-red-500">*</span>
             </label>
             <input
@@ -213,7 +210,7 @@ export default function Register() {
               placeholder="Choose a username"
               value={formData.username}
               onChange={handleChange}
-              className={`w-full p-3 rounded-lg border ${
+              className={`w-full p-2.5 rounded-lg border ${
                 fieldErrors.username ? 'border-red-500' : 'border-gray-300'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm`}
               disabled={loading}
@@ -221,13 +218,13 @@ export default function Register() {
               autoComplete="username"
             />
             {fieldErrors.username && (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.username}</p>
+              <p className="mt-0.5 text-xs text-red-500">{fieldErrors.username}</p>
             )}
           </div>
 
           {/* Email Input */}
-          <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
+          <div className="w-full mb-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -236,20 +233,20 @@ export default function Register() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full p-3 rounded-lg border ${
+              className={`w-full p-2.5 rounded-lg border ${
                 fieldErrors.email ? 'border-red-500' : 'border-gray-300'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm`}
               disabled={loading}
               autoComplete="email"
             />
             {fieldErrors.email && (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.email}</p>
+              <p className="mt-0.5 text-xs text-red-500">{fieldErrors.email}</p>
             )}
           </div>
 
           {/* Password Input */}
-          <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
+          <div className="w-full mb-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -258,24 +255,24 @@ export default function Register() {
               placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
-              className={`w-full p-3 rounded-lg border ${
+              className={`w-full p-2.5 rounded-lg border ${
                 fieldErrors.password ? 'border-red-500' : 'border-gray-300'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm`}
               disabled={loading}
               autoComplete="new-password"
             />
             {fieldErrors.password ? (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.password}</p>
+              <p className="mt-0.5 text-xs text-red-500">{fieldErrors.password}</p>
             ) : (
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-0.5 text-xs text-gray-400">
                 Must be at least 8 characters
               </p>
             )}
           </div>
 
           {/* Confirm Password */}
-          <div className="w-full mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1 text-left">
+          <div className="w-full mb-4">
+            <label className="block text-xs font-medium text-gray-700 mb-1 text-left">
               Confirm Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -284,14 +281,14 @@ export default function Register() {
               placeholder="Confirm your password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`w-full p-3 rounded-lg border ${
+              className={`w-full p-2.5 rounded-lg border ${
                 fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-300'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm text-sm`}
               disabled={loading}
               autoComplete="new-password"
             />
             {fieldErrors.confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">{fieldErrors.confirmPassword}</p>
+              <p className="mt-0.5 text-xs text-red-500">{fieldErrors.confirmPassword}</p>
             )}
           </div>
 
@@ -299,11 +296,11 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm"
           >
             {loading ? (
               <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -315,14 +312,14 @@ export default function Register() {
           </button>
 
           {/* Login Link */}
-          <p className="mt-6 text-sm text-gray-600">
+          <p className="mt-4 text-sm text-gray-600">
             Already have an account?{" "}
             <Link to="/login" className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors">
               Sign in here
             </Link>
           </p>
 
-          <p className="mt-4 text-xs text-gray-400 text-center">
+          <p className="mt-3 text-xs text-gray-400 text-center">
             By registering, you agree to our Terms of Service
           </p>
         </form>
