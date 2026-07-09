@@ -181,10 +181,11 @@ export default function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <Card variant="default" className="w-full max-w-md">
+      {/* ✅ Added pt-6 to Card to move everything down together */}
+      <Card variant="default" className="w-full max-w-md pt-6">
         <form onSubmit={handleSubmit} className="flex flex-col items-center w-full">
-          {/* Logo / Brand - Moved down with pt-4 */}
-          <div className="mb-5 text-center pt-4">
+          {/* Logo / Brand */}
+          <div className="mb-5 text-center">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-2.5 shadow-lg shadow-blue-500/25">
               <span className="text-2xl">✨</span>
             </div>
