@@ -37,7 +37,7 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    // ✅ Trim and validate inputs
+    //  Trim and validate inputs
     const trimmedUsername = username.trim();
     const trimmedPassword = password.trim();
 
@@ -54,14 +54,14 @@ export default function Login() {
     try {
       console.log("🔐 Attempting login for:", trimmedUsername);
       
-      // ✅ Clear any stale auth data before login
+      //  Clear any stale auth data before login
       clearAuthData();
       
-      // ✅ Use the auth context login
+      //  Use the auth context login
       const success = await login(trimmedUsername, trimmedPassword);
       
       if (success) {
-        console.log("✅ Login successful via AuthContext");
+        console.log(" Login successful via AuthContext");
         // Navigation is handled inside AuthContext login
       } else {
         // ❌ Fallback should not be needed if AuthContext login works
@@ -96,7 +96,7 @@ export default function Login() {
     }
   };
 
-  // ✅ Fallback login method (if AuthContext login fails)
+  //  Fallback login method (if AuthContext login fails)
   const handleFallbackLogin = async (username, password) => {
     try {
       console.log("🔄 Fallback: Direct API call...");
@@ -163,7 +163,7 @@ export default function Login() {
     });
   };
 
-  // ✅ Fill Manager demo credentials
+  //  Fill Manager demo credentials
   const fillManagerCredentials = () => {
     setUsername("manager");
     setPassword("Manager123!");
@@ -178,7 +178,7 @@ export default function Login() {
     });
   };
 
-  // ✅ Go back to home
+  //  Go back to home
   const goToHome = () => {
     navigate("/");
   };
@@ -268,7 +268,7 @@ export default function Login() {
               className="flex-1 text-xs text-gray-400 hover:text-blue-600 transition-colors py-1 border border-gray-200 rounded-lg hover:border-blue-300"
               disabled={loading}
             >
-              👑 Admin Demo
+               Admin Demo
             </button>
             <button
               type="button"
@@ -276,7 +276,7 @@ export default function Login() {
               className="flex-1 text-xs text-gray-400 hover:text-green-600 transition-colors py-1 border border-gray-200 rounded-lg hover:border-green-300"
               disabled={loading}
             >
-              📊 Manager Demo
+               Manager Demo
             </button>
           </div>
 
@@ -288,7 +288,7 @@ export default function Login() {
             </Link>
           </p>
 
-          {/* ✅ Single "Back to Home" Link - Bottom */}
+          {/*  Single "Back to Home" Link - Bottom */}
           <Link 
             to="/" 
             className="mt-3 text-xs text-gray-400 hover:text-blue-600 transition-colors flex items-center gap-1"
