@@ -1,6 +1,6 @@
 // src/pages/Projects.jsx
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   PlusIcon,
@@ -20,13 +20,21 @@ import {
   LightBulbIcon,
   ExclamationTriangleIcon,
   RefreshCwIcon,
+  ArrowLeftIcon,
+  CalendarIcon,
+  UserIcon,
+  ClipboardDocumentListIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
 import useProjects from "../hooks/useProjects";
 import api from "../services/api";
 
-// ✅ Animated Counter Component
+// ============================================
+// ANIMATED COUNTER
+// ============================================
+
 const AnimatedCounter = ({ value, duration = 1000 }) => {
   const [count, setCount] = useState(0);
   const countRef = useRef(null);
@@ -53,7 +61,10 @@ const AnimatedCounter = ({ value, duration = 1000 }) => {
   return <span>{count}</span>;
 };
 
-// ✅ Project Card Component
+// ============================================
+// PROJECT CARD
+// ============================================
+
 const ProjectCard = ({ project, onEdit, onDelete, onView, onAIGuidance }) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -178,7 +189,10 @@ const ProjectCard = ({ project, onEdit, onDelete, onView, onAIGuidance }) => {
   );
 };
 
-// ✅ KPI Card Component
+// ============================================
+// KPI CARD
+// ============================================
+
 const KPIProjectCard = ({ title, value, icon: Icon, color, bgColor, count }) => {
   return (
     <div 
@@ -200,7 +214,10 @@ const KPIProjectCard = ({ title, value, icon: Icon, color, bgColor, count }) => 
   );
 };
 
-// ✅ Project Trend Chart Component
+// ============================================
+// PROJECT TREND CHART
+// ============================================
+
 const ProjectTrendChart = ({ projectId }) => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -324,144 +341,161 @@ const ProjectTrendChart = ({ projectId }) => {
   );
 };
 
-// ✅ Action Buttons Component
-const ActionButtons = ({ projectId, onActionApplied }) => {
-  const [loading, setLoading] = useState(false);
-  const [showReassign, setShowReassign] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [selectedTask, setSelectedTask] = useState("");
-  const [selectedUser, setSelectedUser] = useState("");
+// ============================================
+// PROJECT DETAIL MODAL
+// ============================================
 
-  useEffect(() => {
-    if (showReassign) {
-      fetchUsers();
-    }
-  }, [showReassign]);
+const ProjectDetailModal = ({ project, isOpen, onClose }) => {
+  if (!isOpen || !project) return null;
 
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch("http://localhost:8000/api/users/", {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setUsers(data.results || []);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    }
+  const getStatusColor = (status) => {
+    const colors = {
+      active: "bg-emerald-100 text-emerald-700 border-emerald-200",
+      completed: "bg-blue-100 text-blue-700 border-blue-200",
+      archived: "bg-gray-100 text-gray-700 border-gray-200",
+    };
+    return colors[status] || "bg-gray-100 text-gray-700";
   };
 
-  const applyAction = async (action, data = {}) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(`http://localhost:8000/api/ai/projects/${projectId}/apply/`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ action, ...data })
-      });
-      
-      if (!response.ok) throw new Error("Failed to apply recommendation");
-      
-      const result = await response.json();
-      toast.success(result.message);
-      onActionApplied();
-      setShowReassign(false);
-      
-    } catch (error) {
-      console.error("❌ Failed to apply:", error);
-      toast.error("Failed to apply recommendation");
-    } finally {
-      setLoading(false);
-    }
+  const getStatusIcon = (status) => {
+    const icons = {
+      active: <ClockIcon className="w-4 h-4" />,
+      completed: <CheckCircleIcon className="w-4 h-4" />,
+      archived: <ArchiveBoxIcon className="w-4 h-4" />,
+    };
+    return icons[status] || null;
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mt-3">
-      <button
-        onClick={() => setShowReassign(!showReassign)}
-        disabled={loading}
-        className="px-3 py-1.5 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-1"
-      >
-        <span>🔄</span>
-        <span>Reassign Task</span>
-      </button>
-      <button
-        onClick={() => applyAction("extend_deadline", { task_id: 0, new_days: 3 })}
-        disabled={loading}
-        className="px-3 py-1.5 text-xs bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors flex items-center space-x-1"
-      >
-        <span>📅</span>
-        <span>Extend Deadline</span>
-      </button>
-      <button
-        onClick={() => applyAction("set_priority", { task_id: 0, new_priority: "high" })}
-        disabled={loading}
-        className="px-3 py-1.5 text-xs bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-1"
-      >
-        <span>🔴</span>
-        <span>Set High Priority</span>
-      </button>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+              {project.name?.charAt(0).toUpperCase() || "P"}
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">{project.name}</h3>
+              <p className="text-xs text-gray-500">Project Details</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <XMarkIcon className="w-5 h-5" />
+          </button>
+        </div>
 
-      {showReassign && (
-        <div className="w-full mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-xs font-medium text-gray-700 mb-2">Reassign Task</p>
-          <div className="flex flex-wrap gap-2">
-            <input
-              type="text"
-              placeholder="Task ID"
-              value={selectedTask}
-              onChange={(e) => setSelectedTask(e.target.value)}
-              className="flex-1 min-w-[100px] px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
-            />
-            <select
-              value={selectedUser}
-              onChange={(e) => setSelectedUser(e.target.value)}
-              className="flex-1 min-w-[100px] px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500"
-            >
-              <option value="">Select User</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username}
-                </option>
-              ))}
-            </select>
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Description */}
+          {project.description && (
+            <div className="bg-gray-50 rounded-xl p-4">
+              <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Description</h4>
+              <p className="text-gray-700">{project.description}</p>
+            </div>
+          )}
+
+          {/* Status Badge */}
+          <div className="flex items-center space-x-2">
+            <span className={`inline-flex items-center space-x-1.5 text-sm font-medium px-3 py-1.5 rounded-full border ${getStatusColor(project.status)}`}>
+              {getStatusIcon(project.status)}
+              <span className="capitalize">{project.status}</span>
+            </span>
+          </div>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="flex items-center space-x-2">
+                <CalendarIcon className="w-4 h-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</h4>
+              </div>
+              <p className="text-gray-700 font-medium mt-1">
+                {project.start_date ? new Date(project.start_date).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }) : "Not set"}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="flex items-center space-x-2">
+                <CalendarIcon className="w-4 h-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</h4>
+              </div>
+              <p className="text-gray-700 font-medium mt-1">
+                {project.end_date ? new Date(project.end_date).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }) : "Not set"}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="flex items-center space-x-2">
+                <UserIcon className="w-4 h-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Manager</h4>
+              </div>
+              <p className="text-gray-700 font-medium mt-1">
+                {project.manager?.username || project.manager || "Unassigned"}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="flex items-center space-x-2">
+                <ClipboardDocumentListIcon className="w-4 h-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Project ID</h4>
+              </div>
+              <p className="text-gray-700 font-medium mt-1 font-mono">#{project.id}</p>
+            </div>
+          </div>
+
+          {/* Project Stats */}
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4">
+            <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Project Statistics</h4>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-indigo-600">{project.task_count || 0}</p>
+                <p className="text-xs text-gray-500">Total Tasks</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-emerald-600">{project.completed_tasks || 0}</p>
+                <p className="text-xs text-gray-500">Completed</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-amber-600">{project.in_progress_tasks || 0}</p>
+                <p className="text-xs text-gray-500">In Progress</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Close Button */}
+          <div className="flex justify-end pt-4 border-t border-gray-100">
             <button
-              onClick={() => {
-                if (selectedTask && selectedUser) {
-                  applyAction("reassign_task", { 
-                    task_id: parseInt(selectedTask), 
-                    new_user_id: parseInt(selectedUser) 
-                  });
-                } else {
-                  toast.error("Please select both task and user");
-                }
-              }}
-              disabled={loading}
-              className="px-3 py-1 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              onClick={onClose}
+              className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              Apply
-            </button>
-            <button
-              onClick={() => setShowReassign(false)}
-              className="px-3 py-1 text-xs bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-            >
-              Cancel
+              Close
             </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-// ✅ AI Guidance Modal Component
-const AIGuidanceModal = ({ project, onClose }) => {
+// ============================================
+// AI GUIDANCE MODAL - PROFESSIONAL VERSION
+// ============================================
+
+const AIGuidanceModal = ({ project, isOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState(null);
   const [error, setError] = useState(null);
@@ -470,6 +504,8 @@ const AIGuidanceModal = ({ project, onClose }) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
   useEffect(() => {
+    if (!isOpen || !project) return;
+
     const fetchAIInsights = async () => {
       setLoading(true);
       setError(null);
@@ -493,27 +529,79 @@ const AIGuidanceModal = ({ project, onClose }) => {
           if (response.status === 403) {
             throw new Error("You don't have permission to view this project's insights");
           }
+          if (response.status === 404) {
+            throw new Error("AI insights endpoint not found.");
+          }
           throw new Error(`HTTP ${response.status}`);
         }
         
         const data = await response.json();
         setInsights(data);
+        
       } catch (err) {
         console.error("❌ Failed to fetch AI insights:", err);
         setError(err.message);
-        toast.error("Failed to load AI guidance");
+        toast.error(err.message || "Failed to load AI guidance");
       } finally {
         setLoading(false);
       }
     };
 
     fetchAIInsights();
-  }, [project.id, onClose, refreshKey]);
+  }, [project?.id, isOpen, onClose, refreshKey]);
 
-  const handleActionApplied = () => {
-    setRefreshKey(prev => prev + 1);
-    toast.success("✅ Action applied successfully!");
+  // ✅ Safely extract content from various response formats
+  const getTextContent = (content) => {
+    if (!content) return null;
+    if (typeof content === 'string') return content;
+    if (typeof content === 'object') {
+      if (content.message) return content.message;
+      if (content.body) return content.body;
+      if (content.summary) return content.summary;
+      if (content.description) return content.description;
+      if (Array.isArray(content)) {
+        return content.map(item => 
+          typeof item === 'string' ? item : item.message || item.body || JSON.stringify(item)
+        ).join(' ');
+      }
+      return JSON.stringify(content);
+    }
+    return String(content);
   };
+
+  // ✅ Extract recommendations properly
+  const getRecommendations = () => {
+    if (!insights?.ai_insights?.recommendations) {
+      return ['No recommendations available'];
+    }
+    
+    const recs = insights.ai_insights.recommendations;
+    
+    if (typeof recs === 'string') {
+      return recs.split('\n').filter(r => r.trim().length > 0);
+    }
+    
+    if (Array.isArray(recs)) {
+      return recs.map(r => getTextContent(r)).filter(r => r);
+    }
+    
+    if (typeof recs === 'object') {
+      const text = getTextContent(recs);
+      if (text) {
+        return text.split('\n').filter(r => r.trim().length > 0);
+      }
+      if (recs.actions && Array.isArray(recs.actions)) {
+        return recs.actions.map(a => a.instruction || a.action || JSON.stringify(a));
+      }
+      return [JSON.stringify(recs)];
+    }
+    
+    return ['No recommendations available'];
+  };
+
+  const recommendations = getRecommendations();
+
+  if (!isOpen || !project) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -557,7 +645,7 @@ const AIGuidanceModal = ({ project, onClose }) => {
             </div>
           ) : insights ? (
             <>
-              {/* Metrics */}
+              {/* Metrics Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-gray-50 rounded-xl p-3 text-center">
                   <p className="text-2xl font-bold text-gray-900">{insights.metrics?.total_tasks || 0}</p>
@@ -577,44 +665,60 @@ const AIGuidanceModal = ({ project, onClose }) => {
                 </div>
               </div>
 
-              {/* ✅ Trend Chart */}
+              {/* Trend Chart */}
               <ProjectTrendChart projectId={project.id} />
 
-              {/* AI Summary & Risks */}
+              {/* Summary & Risks */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Summary */}
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                   <div className="flex items-start space-x-3">
                     <CheckCircleIcon className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                     <div>
                       <h4 className="text-sm font-semibold text-blue-900">📋 Summary</h4>
-                      <p className="text-sm text-blue-700 mt-1">{insights.ai_insights?.summary}</p>
+                      <p className="text-sm text-blue-700 mt-1">
+                        {getTextContent(insights.ai_insights?.summary) || 'No summary available'}
+                      </p>
                     </div>
                   </div>
                 </div>
 
+                {/* Risks */}
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <div className="flex items-start space-x-3">
                     <ExclamationTriangleIcon className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                     <div>
                       <h4 className="text-sm font-semibold text-amber-900">⚠️ Risks</h4>
-                      <p className="text-sm text-amber-700 mt-1">{insights.ai_insights?.risks}</p>
+                      <p className="text-sm text-amber-700 mt-1">
+                        {getTextContent(insights.ai_insights?.risks) || 'No risks identified'}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* ✅ Recommendations with Action Buttons */}
+              {/* Recommendations */}
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
                 <div className="flex items-start space-x-3">
                   <LightBulbIcon className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <h4 className="text-sm font-semibold text-emerald-900">💡 Recommendations</h4>
-                    <p className="text-sm text-emerald-700 mt-1 whitespace-pre-wrap">{insights.ai_insights?.recommendations}</p>
-                    
-                    <ActionButtons 
-                      projectId={project.id}
-                      onActionApplied={handleActionApplied}
-                    />
+                    <div className="mt-2 space-y-2">
+                      {recommendations.length > 0 ? (
+                        recommendations.map((rec, index) => (
+                          <div 
+                            key={index} 
+                            className="bg-white/80 rounded-lg p-3 border border-emerald-100"
+                          >
+                            <p className="text-sm text-emerald-800">
+                              {index + 1}. {rec}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-emerald-700">No recommendations available</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -650,7 +754,12 @@ const AIGuidanceModal = ({ project, onClose }) => {
                 </div>
               )}
             </>
-          ) : null}
+          ) : (
+            <div className="text-center py-12">
+              <SparklesIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No insights available for this project.</p>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -668,6 +777,10 @@ const AIGuidanceModal = ({ project, onClose }) => {
   );
 };
 
+// ============================================
+// MAIN PROJECTS COMPONENT
+// ============================================
+
 export default function Projects() {
   const navigate = useNavigate();
   const { projects, createProject, updateProject, deleteProject } = useProjects();
@@ -682,6 +795,7 @@ export default function Projects() {
   
   const [selectedProject, setSelectedProject] = useState(null);
   const [showAIGuidance, setShowAIGuidance] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const [newProject, setNewProject] = useState({
     name: "",
@@ -721,6 +835,21 @@ export default function Projects() {
   const handleAIGuidance = (project) => {
     setSelectedProject(project);
     setShowAIGuidance(true);
+  };
+
+  const closeAIGuidance = () => {
+    setShowAIGuidance(false);
+    setSelectedProject(null);
+  };
+
+  const handleViewDetails = (project) => {
+    setSelectedProject(project);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedProject(null);
   };
 
   const handleCreate = async (e) => {
@@ -772,10 +901,6 @@ export default function Projects() {
     } catch (error) {
       toast.error("Failed to delete project");
     }
-  };
-
-  const handleView = (project) => {
-    navigate(`/projects/${project.id}`);
   };
 
   return (
@@ -888,7 +1013,7 @@ export default function Projects() {
                   project={project}
                   onEdit={setEditingProject}
                   onDelete={(id) => setShowDeleteConfirm(id)}
-                  onView={handleView}
+                  onView={handleViewDetails}
                   onAIGuidance={handleAIGuidance}
                 />
               ))
@@ -901,10 +1026,17 @@ export default function Projects() {
       {showAIGuidance && selectedProject && (
         <AIGuidanceModal
           project={selectedProject}
-          onClose={() => {
-            setShowAIGuidance(false);
-            setSelectedProject(null);
-          }}
+          isOpen={showAIGuidance}
+          onClose={closeAIGuidance}
+        />
+      )}
+
+      {/* ✅ Project Detail Modal */}
+      {showDetailModal && selectedProject && (
+        <ProjectDetailModal
+          project={selectedProject}
+          isOpen={showDetailModal}
+          onClose={closeDetailModal}
         />
       )}
 
