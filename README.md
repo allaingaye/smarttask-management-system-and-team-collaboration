@@ -31,7 +31,6 @@ A modern, full-stack project management platform with real-time collaboration, A
 ### 🔔 Real-Time Notifications
 - WebSocket-based live notifications
 - Assignment alerts
-- Deadline reminders
 - Status change updates
 
 ### 📊 Analytics Dashboard
@@ -118,7 +117,6 @@ SmartTask follows a RESTful API architecture built with Django REST Framework an
 - `GET /api/ai/insights/` – Global AI insights
 - `GET /api/ai/projects/{id}/insights/` – Project AI insights
 - `GET /api/ai/alerts/` – AI alerts
-- `POST /api/ai/projects/{id}/apply/` – Apply recommendation
 
 ###  Analytics API
 - `GET /api/analytics/` – Admin analytics
