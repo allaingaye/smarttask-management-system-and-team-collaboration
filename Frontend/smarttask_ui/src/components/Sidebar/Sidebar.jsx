@@ -31,7 +31,7 @@ export default function Sidebar({ unreadCount = 0 }) {
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-  // ✅ Fetch stats based on role
+  // Fetch stats based on role
   const fetchStats = useCallback(async () => {
     try {
       const token = localStorage.getItem("access_token");
@@ -90,21 +90,21 @@ export default function Sidebar({ unreadCount = 0 }) {
     }
   }, [API_BASE_URL, userRole]);
 
-  // ✅ Fetch stats when userRole changes
+  // Fetch stats when userRole changes
   useEffect(() => {
     if (userRole && isAuthenticated) {
       fetchStats();
     }
   }, [userRole, isAuthenticated, fetchStats]);
 
-  // ✅ Update loading state from auth context
+  //  Update loading state from auth context
   useEffect(() => {
     if (!authLoading) {
       setLoading(false);
     }
   }, [authLoading]);
 
-  // ✅ Get role-specific dashboard configuration
+  // Get role-specific dashboard configuration
   const getDashboardConfig = () => {
     if (userRole === "Manager") {
       return {
@@ -146,7 +146,7 @@ export default function Sidebar({ unreadCount = 0 }) {
       },
     ];
 
-    // ✅ Admin Menu
+    //  Admin Menu
     if (userRole === "Admin") {
       return [
         ...commonItems,
@@ -197,7 +197,7 @@ export default function Sidebar({ unreadCount = 0 }) {
       ];
     }
 
-    // ✅ Manager Menu
+    //  Manager Menu
     if (userRole === "Manager") {
       return [
         ...commonItems,
@@ -236,7 +236,7 @@ export default function Sidebar({ unreadCount = 0 }) {
       ];
     }
 
-    // ✅ Member Menu
+    //  Member Menu
     if (userRole === "Member") {
       return [
         ...commonItems,
@@ -271,7 +271,7 @@ export default function Sidebar({ unreadCount = 0 }) {
 
   const items = getMenuItems();
 
-  // ✅ Handle Logout using AuthContext
+  //  Handle Logout using AuthContext
   const handleLogout = () => {
     toast.custom(
       (t) => (
@@ -319,7 +319,7 @@ export default function Sidebar({ unreadCount = 0 }) {
     );
   };
 
-  // ✅ Helper functions
+  //  Helper functions
   const getInitials = (name) => {
     if (!name) return "U";
     return name
@@ -348,7 +348,7 @@ export default function Sidebar({ unreadCount = 0 }) {
     return icons[role] || "👤";
   };
 
-  // ✅ Loading state
+  //  Loading state
   if (loading || authLoading) {
     return (
       <aside className="w-64 bg-white border-r h-screen flex flex-col sticky top-0 z-20 shadow-sm">
@@ -359,7 +359,7 @@ export default function Sidebar({ unreadCount = 0 }) {
     );
   }
 
-  // ✅ If not authenticated, show minimal sidebar or nothing
+  //  If not authenticated, show minimal sidebar or nothing
   if (!isAuthenticated) {
     return null;
   }
