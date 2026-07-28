@@ -46,16 +46,16 @@ class AnalyticsView(APIView):
         try:
             now = timezone.now().date()
 
-            # ✅ Check if user is Admin or Manager
+            #  Check if user is Admin or Manager
             is_admin = request.user.role == "Admin"
             is_manager = request.user.role == "Manager"
 
-            # ✅ Get filter parameters
+            #  Get filter parameters
             status_filter = request.query_params.get('status', None)
             priority_filter = request.query_params.get('priority', None)
             project_filter = request.query_params.get('project', None)
 
-            # ✅ Filter based on role
+            #  Filter based on role
             if is_manager:
                 projects = Project.objects.filter(manager=request.user)
                 project_ids = projects.values_list('id', flat=True)
@@ -66,7 +66,7 @@ class AnalyticsView(APIView):
                 tasks = Task.objects.all()
                 users = User.objects.all()
 
-            # ✅ Apply status filter to projects
+            #  Apply status filter to projects
             if status_filter and status_filter != 'all':
                 if status_filter == 'active':
                     projects = projects.filter(status='active')
@@ -77,11 +77,11 @@ class AnalyticsView(APIView):
                 elif status_filter == 'archived':
                     projects = projects.filter(status='archived')
                 
-            # ✅ Apply priority filter to tasks
+            #  Apply priority filter to tasks
             if priority_filter and priority_filter != 'all':
                 tasks = tasks.filter(priority=priority_filter)
                 
-            # ✅ Fix: Handle project filter properly - check if it's a valid ID
+            #  check if it's a valid ID
             if project_filter and project_filter != 'all':
                 try:
                     # Try to convert to integer (for project ID)
@@ -166,7 +166,7 @@ class AnalyticsView(APIView):
                 {"name": "Completed", "value": completed_tasks, "color": "#10B981"},
             ]
 
-            # ==================== 📊 WEEKLY ACTIVITY ====================
+            # ====================  WEEKLY ACTIVITY ====================
             weekly_activity = []
             days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
             for i, day in enumerate(days):
@@ -184,7 +184,7 @@ class AnalyticsView(APIView):
                     "completed": day_completed.count(),
                 })
 
-            # ==================== 📊 PERFORMANCE METRICS ====================
+            # ====================  PERFORMANCE METRICS ====================
             
             performance = {
                 "efficiency": min(100, int((completed_tasks / (total_tasks + 1)) * 100)),
@@ -193,7 +193,7 @@ class AnalyticsView(APIView):
                 "timeliness": min(100, int(((total_tasks - overdue_tasks) / (total_tasks + 1)) * 100)),
             }
 
-            # ==================== 📊 RECENT ACTIVITY ====================
+            # ====================  RECENT ACTIVITY ====================
             
             recent_activity = []
             recent_tasks = tasks.order_by('-id')[:10]
@@ -207,7 +207,7 @@ class AnalyticsView(APIView):
                     "timestamp": timezone.now().isoformat(),
                 })
 
-            # ==================== 📦 BUILD RESPONSE ====================
+            # ====================  BUILD RESPONSE ====================
             
             response_data = {
                 "overview": {
@@ -310,7 +310,7 @@ class ManagerAnalyticsView(APIView):
 
 
 # ============================================
-# 📊 EXPORT ANALYTICS
+#  EXPORT ANALYTICS
 # ============================================
 
 class AnalyticsExportView(APIView):
@@ -325,7 +325,7 @@ class AnalyticsExportView(APIView):
             filters = request.data.get('filters', {})
             analytics_data = request.data.get('data', {})
 
-            # ✅ Get fresh data from database
+            #  Get fresh data from database
             fresh_data = self.get_fresh_data(request, filters)
 
             if format_type == 'csv':
