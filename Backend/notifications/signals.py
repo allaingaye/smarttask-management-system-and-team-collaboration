@@ -5,7 +5,7 @@ from projects.models import Project
 from tasks.models import Task
 from notifications.utils import notify_user
 
-# ✅ Project creation + update
+#  Project creation + update
 @receiver(post_save, sender=Project)
 def project_signal(sender, instance, created, **kwargs):
     if created:
@@ -31,7 +31,7 @@ def project_signal(sender, instance, created, **kwargs):
             },
         )
 
-# ✅ Task creation + update
+# Task creation + update
 @receiver(post_save, sender=Task)
 def task_signal(sender, instance, created, **kwargs):
     if created and instance.assigned_to:
@@ -57,7 +57,7 @@ def task_signal(sender, instance, created, **kwargs):
                     "unread": True,
                 },
             )
-            # ✅ Also notify the project manager
+            #  Also notify the project manager
             if instance.project and instance.project.manager:
                 notify_user(
                     user_id=instance.project.manager.id,
@@ -70,7 +70,7 @@ def task_signal(sender, instance, created, **kwargs):
                     },
                 )
 
-            # ✅ Special case: task completed
+            #  Special case: task completed
             if instance.status.lower() == "completed":
                 # Notify assigned user
                 notify_user(
