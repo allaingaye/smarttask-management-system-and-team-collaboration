@@ -97,7 +97,7 @@ class AnalyticsView(APIView):
                         tasks = tasks.filter(project_id=project_obj.id)
                         projects = projects.filter(id=project_obj.id)
 
-            # ==================== 📊 OVERVIEW STATS ====================
+            # ==================== OVERVIEW STATS ====================
             
             total_projects = projects.count()
             active_projects = projects.filter(status="active").count()
@@ -118,7 +118,7 @@ class AnalyticsView(APIView):
 
             team_members = users.count()
 
-            # ==================== 📊 MONTHLY STATS ====================
+            # ====================  MONTHLY STATS ====================
             monthly_stats = []
             for i in range(6, -1, -1):
                 month_date = now - timedelta(days=30 * i)
@@ -150,7 +150,7 @@ class AnalyticsView(APIView):
                     "completed": month_completed.count(),
                 })
 
-            # ==================== 📊 PROJECT STATUS ====================
+            # ====================  PROJECT STATUS ====================
             
             project_status = [
                 {"name": "Active", "value": active_projects, "color": "#3B82F6"},
@@ -158,7 +158,7 @@ class AnalyticsView(APIView):
                 {"name": "Archived", "value": archived_projects, "color": "#6B7280"},
             ]
 
-            # ==================== 📊 TASK DISTRIBUTION ====================
+            # ====================  TASK DISTRIBUTION ====================
             
             task_distribution = [
                 {"name": "Pending", "value": pending_tasks, "color": "#F59E0B"},
