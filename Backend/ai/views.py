@@ -13,27 +13,27 @@ from accounts.models import User
 from accounts.permissions import IsAdminOrManager, CanViewProjectAIInsights, IsProjectManagerOrAdmin
 import logging
 
-# ✅ Import the SmartProjectAnalyzer
+# Import the SmartProjectAnalyzer
 from .smart_analyzer import SmartProjectAnalyzer
 
 logger = logging.getLogger(__name__)
 
-# ✅ Get OpenAI API key from settings
+#  Get OpenAI API key from settings
 OPENAI_API_KEY = getattr(settings, 'OPENAI_API_KEY', None)
 
 
-# ==================== 🌍 GLOBAL AI INSIGHTS (Admin Only) ====================
+#   GLOBAL AI INSIGHTS (Admin Only) ====================
 
 class AIInsightsView(APIView):
     """Global AI insights for all projects - Admin only."""
     permission_classes = [IsAuthenticated, IsAdminOrManager]
 
     def get(self, request):
-        # ✅ Managers can only see their own projects
+        #  Managers can only see their own projects
         if request.user.role == "Manager":
             return self.get_manager_insights(request)
         
-        # ✅ Admin sees everything
+        #  Admin sees everything
         return self.get_admin_insights(request)
 
     def get_admin_insights(self, request):
@@ -88,7 +88,7 @@ class AIInsightsView(APIView):
         try:
             now = timezone.now().date()
             
-            # ✅ Only projects managed by this manager
+            # Only projects managed by this manager
             manager_projects = Project.objects.filter(manager=request.user)
             project_ids = manager_projects.values_list('id', flat=True)
             
@@ -269,17 +269,17 @@ class AIInsightsView(APIView):
                                in_progress_count, active_projects, projects_at_risk, overloaded_users):
         """Build rich context for OpenAI prompts."""
         context = f"""
-📊 PROJECT METRICS:
+ PROJECT METRICS:
 - Total Tasks: {total_tasks}
 - Completed: {completed_count} ({completion_rate:.1f}%)
 - In Progress: {in_progress_count}
 - Overdue: {overdue_count}
 - Active Projects: {active_projects}
 
-⚠️ PROJECTS AT RISK:
+ PROJECTS AT RISK:
 {len(projects_at_risk)} projects have overdue tasks
 
-👥 TEAM WORKLOAD:
+TEAM WORKLOAD:
 {len(overloaded_users)} team members are overloaded
 """
         if projects_at_risk:
@@ -297,45 +297,45 @@ class AIInsightsView(APIView):
     def _generate_fallback_summary(self, total_tasks, completed_count, completion_rate, overdue_count, in_progress_count):
         """Generate fallback summary without OpenAI."""
         if total_tasks == 0:
-            return "📊 No tasks found. Start creating tasks to track progress."
+            return " No tasks found. Start creating tasks to track progress."
         
         if overdue_count > 3:
-            return f"🔴 Critical: {overdue_count} tasks overdue. {completed_count}/{total_tasks} completed ({completion_rate:.1f}%). Immediate action required to address overdue items."
+            return f" Critical: {overdue_count} tasks overdue. {completed_count}/{total_tasks} completed ({completion_rate:.1f}%). Immediate action required to address overdue items."
         elif overdue_count > 0:
-            return f"⚠️ {overdue_count} overdue tasks need attention. {completed_count}/{total_tasks} completed ({completion_rate:.1f}%). Focus on clearing overdue items."
+            return f" {overdue_count} overdue tasks need attention. {completed_count}/{total_tasks} completed ({completion_rate:.1f}%). Focus on clearing overdue items."
         elif completion_rate > 70:
-            return f"✅ Excellent progress! {completed_count}/{total_tasks} completed ({completion_rate:.1f}%). {in_progress_count} tasks in progress. Maintain this momentum."
+            return f" Excellent progress! {completed_count}/{total_tasks} completed ({completion_rate:.1f}%). {in_progress_count} tasks in progress. Maintain this momentum."
         else:
-            return f"📊 {completed_count}/{total_tasks} tasks completed ({completion_rate:.1f}%). {in_progress_count} in progress. Continue working towards project goals."
+            return f" {completed_count}/{total_tasks} tasks completed ({completion_rate:.1f}%). {in_progress_count} in progress. Continue working towards project goals."
 
     def _generate_fallback_predictions(self, projects_at_risk):
         """Generate fallback predictions without OpenAI."""
         if not projects_at_risk:
-            return "✅ All projects appear to be on track. No major risks detected."
+            return " All projects appear to be on track. No major risks detected."
         
         risk_count = len(projects_at_risk)
         if risk_count > 3:
-            return f"🔴 {risk_count} projects at risk of delay. Multiple projects showing signs of falling behind schedule. Consider reviewing resource allocation."
+            return f" {risk_count} projects at risk of delay. Multiple projects showing signs of falling behind schedule. Consider reviewing resource allocation."
         else:
             risk_names = ', '.join([p['name'] for p in projects_at_risk[:3]])
-            return f"⚠️ {risk_count} project(s) at risk: {risk_names}. Overdue tasks are accumulating. Recommend immediate review and action."
+            return f" {risk_count} project(s) at risk: {risk_names}. Overdue tasks are accumulating. Recommend immediate review and action."
 
     def _generate_fallback_recommendations(self, overloaded_users, overdue_count):
         """Generate fallback recommendations without OpenAI."""
         recommendations = []
         
         if overdue_count > 0:
-            recommendations.append(f"📋 Prioritize and complete {overdue_count} overdue tasks immediately.")
+            recommendations.append(f" Prioritize and complete {overdue_count} overdue tasks immediately.")
         
         if overloaded_users:
             overloaded_names = ', '.join([u['username'] for u in overloaded_users[:3]])
-            recommendations.append(f"👥 Rebalance workload: {overloaded_names} are overloaded. Consider redistributing tasks.")
+            recommendations.append(f" Rebalance workload: {overloaded_names} are overloaded. Consider redistributing tasks.")
         
         if overdue_count == 0 and not overloaded_users:
-            recommendations.append("✅ Team workload appears balanced. Continue current workflow and monitor progress.")
+            recommendations.append(" Team workload appears balanced. Continue current workflow and monitor progress.")
         
         if not recommendations:
-            recommendations.append("📊 Review project priorities and ensure alignment with team goals.")
+            recommendations.append(" Review project priorities and ensure alignment with team goals.")
         
         return ' • '.join(recommendations)
 
@@ -368,17 +368,17 @@ class ProjectAIInsightsView(APIView):
         try:
             project = Project.objects.get(id=project_id)
             
-            # ✅ Permission check
+            #  Permission check
             self.check_object_permissions(request, project)
             
-            # ✅ Get data
+            #  Get data
             tasks = Task.objects.filter(project=project)
             members = User.objects.filter(tasks__project=project).distinct()
             
             # ==========================================
             # PHASE 1: Smart Analysis (Always works)
             # ==========================================
-            logger.info(f"🔍 Running SmartProjectAnalyzer for: {project.name}")
+            logger.info(f" Running SmartProjectAnalyzer for: {project.name}")
             analyzer = SmartProjectAnalyzer(project, tasks, members)
             analysis = analyzer.analyze()
             
@@ -571,7 +571,7 @@ Based on this data, provide a professional project analysis following the format
         return prompt
 
 
-# ==================== 📊 PROJECT CHARTS ====================
+# ==================== PROJECT CHARTS ====================
 
 class ProjectChartsView(APIView):
     """Get chart data for project trends."""
@@ -633,7 +633,7 @@ class ProjectChartsView(APIView):
             return Response({"error": str(e)}, status=500)
 
 
-# ==================== 🔔 AI ALERTS ====================
+# ==================== AI ALERTS ====================
 
 class AIAlertCheckView(APIView):
     """Check for AI alerts and send notifications."""
@@ -644,7 +644,7 @@ class AIAlertCheckView(APIView):
             now = timezone.now().date()
             alerts = []
             
-            # ✅ For Managers: only their projects
+            #  For Managers: only their projects
             if request.user.role == "Manager":
                 projects = Project.objects.filter(manager=request.user)
             else:
@@ -700,7 +700,7 @@ class AIAlertCheckView(APIView):
             return Response({"error": str(e)}, status=500)
 
 
-# ==================== ⚡ APPLY RECOMMENDATION ====================
+# ==================== APPLY RECOMMENDATION ====================
 
 class ApplyRecommendationView(APIView):
     """Apply a recommendation to the project."""
@@ -883,7 +883,7 @@ def build_insights_response(self, ai_summary, completion_rate, overdue_count, ac
             "recommendations": ai_recommendations,
             "generated_at": datetime.now().isoformat(),
         },
-        "insights": insights_list,  # ✅ Keep the list for backward compatibility
+        "insights": insights_list,  #  Keep the list for backward compatibility
         "recommendations": [
             {
                 "id": "rec_1",
