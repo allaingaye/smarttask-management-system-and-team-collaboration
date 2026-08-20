@@ -87,42 +87,6 @@ class ProjectAnalysis:
 
 
 class SmartProjectAnalyzer:
-    """
-    Advanced project analysis engine with multi-layer intelligence.
-    
-    Architecture:
-    ┌──────────────────────────────────────────────────────────┐
-    │              ANALYSIS PIPELINE                          │
-    ├──────────────────────────────────────────────────────────┤
-    │ Layer 1: Data Processing & Normalization                │
-    │   → Parse tasks, members, project metadata              │
-    │   → Validate data integrity                             │
-    ├──────────────────────────────────────────────────────────┤
-    │ Layer 2: Pattern Detection                              │
-    │   → Task patterns (stalled, blocked, high-velocity)     │
-    │   → Team workload patterns                              │
-    │   → Deadline patterns                                   │
-    │   → Dependency patterns                                 │
-    ├──────────────────────────────────────────────────────────┤
-    │ Layer 3: Risk Assessment                                │
-    │   → Overdue tasks                                       │
-    │   → Stalled tasks                                       │
-    │   → Workload imbalance                                  │
-    │   → Upcoming deadlines                                  │
-    │   → Dependency blockers                                 │
-    ├──────────────────────────────────────────────────────────┤
-    │ Layer 4: Insight Generation                             │
-    │   → Structured summaries                                │
-    │   → Actionable recommendations                          │
-    │   → Team insights                                       │
-    │   → Predictive insights                                 │
-    ├──────────────────────────────────────────────────────────┤
-    │ Layer 5: Context Building for AI Enhancement            │
-    │   → Rich context for OpenAI                             │
-    │   → Specific task/team references                       │
-    └──────────────────────────────────────────────────────────┘
-    """
-    
     def __init__(self, project, tasks, members):
         """
         Initialize the analyzer with project data.
@@ -174,11 +138,11 @@ class SmartProjectAnalyzer:
             # Phase 5: Context Building
             self._build_context_for_ai()
             
-            logger.info(f"✅ Analysis complete: {self.analysis.total_tasks} tasks, "
+            logger.info(f" Analysis complete: {self.analysis.total_tasks} tasks, "
                        f"{len(self.analysis.team_workload)} team members")
             
         except Exception as e:
-            logger.error(f"❌ Analysis failed: {e}")
+            logger.error(f" Analysis failed: {e}")
             raise
         
         return self.analysis
@@ -497,15 +461,15 @@ class SmartProjectAnalyzer:
         summary_lines = [
             f"{health_icon} {health_text} - Project \"{self.project.name}\"",
             "",
-            f"📊 Progress: {completed}/{total} tasks completed ({rate}%)",
-            f"🔄 In Progress: {in_progress} tasks",
-            f"🔴 Overdue: {overdue} tasks",
+            f" Progress: {completed}/{total} tasks completed ({rate}%)",
+            f" In Progress: {in_progress} tasks",
+            f" Overdue: {overdue} tasks",
         ]
         
         # Add context
         if health == "critical":
             summary_lines.append("")
-            summary_lines.append(f"🚨 CRITICAL: {overdue} overdue tasks blocking progress. Immediate intervention needed.")
+            summary_lines.append(f" CRITICAL: {overdue} overdue tasks blocking progress. Immediate intervention needed.")
             
             # Mention specific overdue tasks
             overdue_tasks = self.analysis.deadline_risks.get("all_risks", [])
@@ -515,22 +479,22 @@ class SmartProjectAnalyzer:
             
         elif health == "warning":
             summary_lines.append("")
-            summary_lines.append(f"⚠️ {overdue} overdue tasks require immediate attention.")
+            summary_lines.append(f" {overdue} overdue tasks require immediate attention.")
             
         elif health == "good":
             summary_lines.append("")
-            summary_lines.append(f"✨ Excellent progress! Team maintaining good velocity at {rate}% completion.")
+            summary_lines.append(f" Excellent progress! Team maintaining good velocity at {rate}% completion.")
             
         else:
             summary_lines.append("")
-            summary_lines.append(f"📈 Moderate progress with room for improvement. Focus on completing pending tasks.")
+            summary_lines.append(f" Moderate progress with room for improvement. Focus on completing pending tasks.")
         
         # Add team context
         overloaded = [m.username for m in self.analysis.team_workload if m.status == "overloaded"]
         if overloaded:
             summary_lines.append("")
             names = ', '.join(overloaded[:3])
-            summary_lines.append(f"👥 {names} {'is' if len(overloaded) == 1 else 'are'} overloaded - consider redistributing work.")
+            summary_lines.append(f" {names} {'is' if len(overloaded) == 1 else 'are'} overloaded - consider redistributing work.")
         
         self.analysis.summary = '\n'.join(summary_lines)
     
@@ -544,7 +508,7 @@ class SmartProjectAnalyzer:
             if r["type"] == "overdue"
         ]
         if overdue_risks:
-            risk_text = "🔴 **Critical: Overdue Tasks**\n"
+            risk_text = " **Critical: Overdue Tasks**\n"
             for risk in overdue_risks[:3]:
                 risk_text += f"  • \"{risk['task_title']}\" overdue by {risk['days_overdue']} days (Assignee: {risk['assignee']})\n"
             risks.append({
@@ -586,7 +550,7 @@ class SmartProjectAnalyzer:
             if r["type"] == "upcoming"
         ]
         if upcoming:
-            upcoming_text = "📅 **Upcoming Deadlines (Next 3 Days)**\n"
+            upcoming_text = " **Upcoming Deadlines (Next 3 Days)**\n"
             for risk in upcoming[:3]:
                 upcoming_text += f"  • \"{risk['task_title']}\" due in {risk['days_until_due']} days (Priority: {risk['priority']})\n"
             risks.append({
@@ -598,7 +562,7 @@ class SmartProjectAnalyzer:
         # 5. Blocked tasks
         blocked = [s for s in stalled if s["type"] == "blocked_task"]
         if blocked:
-            blocked_text = "🚧 **Blocked Tasks**\n"
+            blocked_text = " **Blocked Tasks**\n"
             for b in blocked[:3]:
                 blocked_text += f"  • \"{b['task_title']}\" - {b.get('reason', 'Blocked')} (Assignee: {b['assignee']})\n"
             risks.append({
@@ -718,7 +682,7 @@ class SmartProjectAnalyzer:
         if high_priority_tasks.exists():
             rec = {
                 "id": f"rec_high_priority_{int(datetime.now().timestamp())}",
-                "title": "🎯 Focus on High-Priority Work",
+                "title": " Focus on High-Priority Work",
                 "priority": "high",
                 "description": f"Complete {high_priority_tasks.count()} high-priority tasks",
                 "actions": [],
@@ -739,7 +703,7 @@ class SmartProjectAnalyzer:
         if not recommendations:
             recommendations.append({
                 "id": f"rec_proactive_{int(datetime.now().timestamp())}",
-                "title": "🚀 Maintain Momentum",
+                "title": " Maintain Momentum",
                 "priority": "low",
                 "description": "Project is on track - focus on maintaining velocity",
                 "actions": [
@@ -819,7 +783,7 @@ class SmartProjectAnalyzer:
                         days_over = (predicted_date - end_date).days
                         predictions.append({
                             "type": "completion_risk",
-                            "prediction": f"⚠️ Project may be delayed by {days_over} days at current pace",
+                            "prediction": f" Project may be delayed by {days_over} days at current pace",
                             "confidence": "medium",
                             "details": f"Based on current velocity of {daily_rate:.1f} tasks/day, remaining {remaining} tasks will take ~{int(days_to_complete)} days",
                         })
@@ -827,14 +791,14 @@ class SmartProjectAnalyzer:
                         days_early = (end_date - predicted_date).days
                         predictions.append({
                             "type": "on_track",
-                            "prediction": f"✅ Project likely to complete {days_early} days ahead of schedule",
+                            "prediction": f" Project likely to complete {days_early} days ahead of schedule",
                             "confidence": "high",
                             "details": f"Based on current velocity of {daily_rate:.1f} tasks/day",
                         })
                 else:
                     predictions.append({
                         "type": "estimated_completion",
-                        "prediction": f"📅 Estimated completion: {predicted_date.strftime('%Y-%m-%d')}",
+                        "prediction": f" Estimated completion: {predicted_date.strftime('%Y-%m-%d')}",
                         "confidence": "medium",
                         "details": f"Based on current velocity of {daily_rate:.1f} tasks/day",
                     })
@@ -844,7 +808,7 @@ class SmartProjectAnalyzer:
         if overloaded > 0:
             predictions.append({
                 "type": "team_health",
-                "prediction": f"⚠️ {overloaded} team member(s) at risk of burnout",
+                "prediction": f" {overloaded} team member(s) at risk of burnout",
                 "confidence": "medium",
                 "details": "Consider redistributing tasks and checking in with overloaded members",
             })
@@ -854,7 +818,7 @@ class SmartProjectAnalyzer:
         if critical_risks > 0:
             predictions.append({
                 "type": "deadline_risk",
-                "prediction": f"🔴 {critical_risks} critical risks identified - high probability of deadline issues",
+                "prediction": f" {critical_risks} critical risks identified - high probability of deadline issues",
                 "confidence": "high",
                 "details": "Immediate action required to mitigate risks",
             })
